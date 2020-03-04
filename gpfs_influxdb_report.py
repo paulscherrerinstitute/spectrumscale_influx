@@ -222,7 +222,7 @@ class CollectorClient():
     def connect(self):
         try:
             self.s.connect((self.server, self.port))
-            self.s.settimeout( 1 )
+            self.s.settimeout( 300 )
         except error as err:
             print "Error: " + str(err)
             sys.exit(1)
