@@ -222,7 +222,7 @@ class CollectorClient():
     def connect(self):
         try:
             self.s.connect((self.server, self.port))
-            self.s.settimeout( 300 )
+            self.s.settimeout( 1 )
         except error as err:
             print "Error: " + str(err)
             sys.exit(1)
@@ -237,7 +237,7 @@ class CollectorClient():
             print "Error: " + str(err)
             sys.exit(1)
     
-    def receiveAnswer(self):
+    def receiveAnswerOLD(self):
         self.answer = ""
         while True:
             try:
@@ -249,6 +249,27 @@ class CollectorClient():
                 return self.answer
             self.answer += out
         self.answer = re.sub(r'\n\.',r'',self.answer)
+        return self.answer
+    
+    def receiveAnswer(self):
+        self.answer = ""
+        while True:
+            out = ""
+            try:
+                out = self.s.recv(self.chunk)
+                if len(out) == 0:
+                  if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
+                    self.answer = re.sub(r'\n\.\n',r'',self.answer)
+                    self.answer = re.sub(r'\n\.',r'',self.answer)
+                    self.s.close()
+                    return self.answer
+            except:
+                self.answer += out
+                if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
+                  break
+            self.answer += out
+        self.answer = re.sub(r'\n\.\n',r'',self.answer)
+        self.s.close()
         return self.answer
   
 ##########################################################################################################################
