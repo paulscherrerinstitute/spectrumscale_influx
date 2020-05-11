@@ -15,6 +15,7 @@ Debug=False
 
 metrics_ops = {
     'nsdfs': ['gpfs_nsdfs_bytes_read', 'gpfs_nsdfs_bytes_written','gpfs_nsdfs_read_ops','gpfs_nsdfs_write_ops'],
+    'nsdds': ['gpfs_nsdds_max_disk_wait_rd', 'gpfs_nsdds_max_disk_wait_wr', 'gpfs_nsdds_max_queue_wait_rd', 'gpfs_nsdds_max_queue_wait_wr', 'gpfs_nsdds_tot_disk_wait_rd', 'gpfs_nsdds_tot_disk_wait_wr', 'gpfs_nsdds_tot_queue_wait_rd', 'gpfs_nsdds_tot_queue_wait_wr'],
     'gpfsfs': ['gpfs_fs_bytes_read', 'gpfs_fs_bytes_written', 'gpfs_fs_max_disk_wait_rd', 'gpfs_fs_max_disk_wait_wr', 'gpfs_fs_max_queue_wait_rd', 'gpfs_fs_max_queue_wait_wr', 'gpfs_fs_read_ops', 'gpfs_fs_write_ops'],
     'cpu': ['cpu_user', 'cpu_system', 'cpu_iowait', 'cpu_context', 'cpu_idle', 'cpu_interrupts', 'cpu_nice'],
     'mem': ['mem_active', 'mem_buffers', 'mem_cached', 'mem_dirty', 'mem_memfree', 'mem_memtotal'],
@@ -30,6 +31,7 @@ metrics_ops = {
 
 metrics_filters = {
     'nsdfs': ['gpfs_fs_name'],
+    'nsdds': [],
     'gpfsfs': ['gpfs_fs_name', 'cluster_name'],
     'cpu': [],
     'mem': [],
@@ -45,6 +47,7 @@ metrics_filters = {
 
 rowInfoFunctions = {
     'nsdfs': 'nsdfs',
+    'nsdds': 'nsdds',
     'gpfsfs': 'gpfsfs',
     'cpu': 'cpu',
     'mem': 'mem',
@@ -61,6 +64,7 @@ rowInfoFunctions = {
 tagqueries = {
     'nsdfs': 'nsdfs_query',
     'gpfsfs': 'gpfsfs_query',
+    'nsdds': 'nsdds_query',
     'cpu': 'cpu_query',
     'mem': 'mem_query',
     'net': 'net_query',
@@ -117,6 +121,12 @@ class rowInfo_nsdfs():
         self.host = host
         self.filesystem = fs
         self.metric = metric
+ 
+class rowInfo_nsdds():
+    def __init__(self, host, nsd, metric):
+        self.nsd = nsd
+        self.host = host
+        self.metric = metric
                
 class rowInfo_net():
     def __init__(self, host, nic, metric):
@@ -142,6 +152,10 @@ class Funcs():
 
     def nsdfs(self, array):
         return rowInfo_nsdfs(array[0], array[2], array[3])
+
+    def nsdds(self, array):
+        #print array
+        return rowInfo_nsdds(array[0], array[2], array[3])
 
     def cpu(self, array):
         return rowInfo(array[0], array[2])
@@ -175,6 +189,10 @@ class Funcs():
 
     def nsdfs_query(self, rowinfo):
         return "filesystem=%s,host=%s,operation=%s" % (rowinfo.filesystem, rowinfo.host, rowinfo.metric)
+    
+    def nsdds_query(self, rowinfo):
+        #print(array)
+        return "host=%s,nsd=%s,operation=%s" % (rowinfo.host, rowinfo.nsd, rowinfo.metric)
     
     def gpfsfs_query(self, rowinfo):
         return "filesystem=%s,host=%s,operation=%s,cluster=%s" % (rowinfo.filesystem, rowinfo.host, rowinfo.metric, rowinfo.cluster)
@@ -224,7 +242,7 @@ class CollectorClient():
             self.s.connect((self.server, self.port))
             self.s.settimeout( 1 )
         except error as err:
-            print "Error: " + str(err)
+            print("Error: " + str(err))
             sys.exit(1)
             
     def disconnect(self):
