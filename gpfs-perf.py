@@ -16,7 +16,7 @@ Debug=False
 metrics_ops = {
     'nsdfs': ['gpfs_nsdfs_bytes_read', 'gpfs_nsdfs_bytes_written','gpfs_nsdfs_read_ops','gpfs_nsdfs_write_ops'],
     'nsdds': ['gpfs_nsdds_max_disk_wait_rd', 'gpfs_nsdds_max_disk_wait_wr', 'gpfs_nsdds_max_queue_wait_rd', 'gpfs_nsdds_max_queue_wait_wr', 'gpfs_nsdds_tot_disk_wait_rd', 'gpfs_nsdds_tot_disk_wait_wr', 'gpfs_nsdds_tot_queue_wait_rd', 'gpfs_nsdds_tot_queue_wait_wr'],
-    'gpfsfs': ['gpfs_fs_bytes_read', 'gpfs_fs_bytes_written', 'gpfs_fs_max_disk_wait_rd', 'gpfs_fs_max_disk_wait_wr', 'gpfs_fs_max_queue_wait_rd', 'gpfs_fs_max_queue_wait_wr', 'gpfs_fs_read_ops', 'gpfs_fs_write_ops'],
+    'gpfsfs': ['gpfs_fs_bytes_read', 'gpfs_fs_bytes_written', 'gpfs_fs_max_disk_wait_rd', 'gpfs_fs_max_disk_wait_wr', 'gpfs_fs_max_queue_wait_rd', 'gpfs_fs_max_queue_wait_wr', 'gpfs_fs_read_ops', 'gpfs_fs_write_ops','gpfs_fs_tot_disk_wait_rd','gpfs_fs_tot_disk_wait_wr','gpfs_fs_tot_queue_wait_rd','gpfs_fs_tot_queue_wait_wr'],
     'cpu': ['cpu_user', 'cpu_system', 'cpu_iowait', 'cpu_context', 'cpu_idle', 'cpu_interrupts', 'cpu_nice'],
     'mem': ['mem_active', 'mem_buffers', 'mem_cached', 'mem_dirty', 'mem_memfree', 'mem_memtotal'],
     'net': ['netdev_bytes_r', 'netdev_bytes_s', 'netdev_errors_r', 'netdev_errors_s', 'netdev_packets_r', 'netdev_packets_s', 'netdev_drop_r', 'netdev_drop_s'],
