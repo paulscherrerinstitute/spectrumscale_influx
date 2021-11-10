@@ -6,6 +6,7 @@ from socket import *
 import re
 import json
 import argparse
+import os
 
 ##########################################################################################################################
 
@@ -230,16 +231,25 @@ class Funcs():
 ##########################################################################################################################
 
 class CollectorClient():
-    def __init__(self, server, port=9084, maxChunkSize=16384):
-        self.server = server
-        self.port   = port
+    def __init__(self, server, socketname, Debug, port=9084, maxChunkSize=16384):
         self.chunk  = maxChunkSize
-        self.s = socket(AF_INET, SOCK_STREAM)
+        self.unix_socket = socketname
+        if os.path.exists(socketname):
+            self.address = socketname
+            family = AF_UNIX
+            if Debug:
+                print "Connecting to collector at endpoint: %s" % (self.address)
+        else:
+            family = AF_INET
+            self.address = (server, port)
+            if Debug:
+                print "Connecting to collector at endpoint: %s:%s" % (self.address)
+        self.s = socket(family, SOCK_STREAM)
         self.answer = ""
         
     def connect(self):
         try:
-            self.s.connect((self.server, self.port))
+            self.s.connect((self.address))
             self.s.settimeout( 1 )
         except error as err:
             print("Error: " + str(err))
@@ -345,6 +355,9 @@ def main():
     parser.add_argument('--collector', type=str, required=False, default='localhost',
                         help='hostname or ip of the host running the pmcollector process')
     
+    parser.add_argument('--collsocket', type=str, required=False,
+                        help='UNIX socket for the pmcollector process')
+
     parser.add_argument('--collport', type=int, required=False, default=9084,
                         help='TCP port number of the pmcollector process')
     
@@ -393,9 +406,8 @@ def main():
     Debug = args.debug
         
     collectorhost = args.collector or 'localhost'
-    if Debug:
-        print "Connecting to collector at endpoint: %s:%d" % (collectorhost, args.collport)
-    cli = CollectorClient(collectorhost, args.collport)
+    collectorsocket = args.collsocket or '/var/run/perfmon/pmcollector.socket'
+    cli = CollectorClient(collectorhost, collectorsocket, Debug, args.collport)
     cli.connect()
 
     delay = args.delay
