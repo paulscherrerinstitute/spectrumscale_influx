@@ -260,7 +260,7 @@ class CollectorClient():
                 
     def sendQuery(self, query):
         try:
-            self.s.send(query)
+            self.s.send(query.encode(encoding='UTF-8'))
         except error as err:
             print "Error: " + str(err)
             sys.exit(1)
@@ -284,7 +284,7 @@ class CollectorClient():
         while True:
             out = ""
             try:
-                out = self.s.recv(self.chunk)
+                out = self.s.recv(self.chunk.decode(encoding='UTF-8'))
                 if len(out) == 0:
                   if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
                     self.answer = re.sub(r'\n\.\n',r'',self.answer)
