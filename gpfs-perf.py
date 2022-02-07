@@ -284,7 +284,7 @@ class CollectorClient():
         while True:
             out = ""
             try:
-                out = self.s.recv(self.chunk.decode(encoding='UTF-8'))
+                out = self.s.recv(self.chunk).decode(encoding='UTF-8')
                 if len(out) == 0:
                   if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
                     self.answer = re.sub(r'\n\.\n',r'',self.answer)
