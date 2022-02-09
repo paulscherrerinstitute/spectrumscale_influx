@@ -271,68 +271,29 @@ class CollectorClient():
             print("Error: " + str(err))
             sys.exit(1)
     
-    #def receiveAnswerOLD(self):
-    #    self.answer = ""
-    #    while True:
-    #        try:
-    #            out = self.s.recv(self.chunk) #.decode(encoding='UTF-8')
-    #        except:
-    #            break
-    #        if len(out) <= 0:
-    #            self.answer = re.sub(r'\n\.',r'',self.answer)
-    #            return self.answer
-    #        self.answer += out
-    #    self.answer = re.sub(r'\n\.',r'',self.answer)
-    #    return self.answer
-    
-    def receiveAnswer(self):
-        self.answer = ""
-        answer_list = []
+    def receiveAnswer(self):   
+        sock = self.s
+        chunk = self.chunk
+
+        answers = []
         while True:
-            out = ""
             try:
-                out = self.s.recv(self.chunk) #.decode(encoding='UTF-8')
-                if len(out) == 0:
+                out = sock.recv(chunk)
+                if not len(out):
                     break
-                  #if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
-                  #  self.answer = re.sub(r'\n\.\n',r'',self.answer)
-                  #  self.answer = re.sub(r'\n\.',r'',self.answer)
-                  #  self.s.close()
-                  #  return self.answer
-            except:
-                pass
-                #self.answer += out
-                
-                #if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
-                #  break
-            answer_list.append(out)
-        self.answer = ''.join(answer_list)
-        self.answer = self.answer.decode(encoding='UTF-8')
-        self.answer = re.sub(r'\n\.\n',r'',self.answer)
-        self.s.close()
-        return str(self.answer)
-    
-    #def receiveAnswerOLD2(self):
-    #    self.answer = ""
-    #    while True:
-    #        out = ""
-    #        try:
-    #            out = self.s.recv(self.chunk) #.decode(encoding='UTF-8')
-    #            if len(out) == 0:
-    #              if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
-    #                self.answer = re.sub(r'\n\.\n',r'',self.answer)
-    #                self.answer = re.sub(r'\n\.',r'',self.answer)
-    #                self.s.close()
-    #                return self.answer
-    #        except:
-    #            self.answer += out
-    #            if self.answer.endswith("}\n.\n") == True or self.answer.endswith("}\n.") == True:
-    #              break
-    #        self.answer += out
-    #    self.answer = re.sub(r'\n\.\n',r'',self.answer)
-    #    self.s.close()
-    #    return self.answer
-  
+            except Exception:
+                continue
+            else:
+                answers.append(out)
+
+        sock.close()
+        answer = b''.join(answers)
+        answer = answer.decode(encoding='UTF-8')
+        answer = re.sub(r'\n\.\n', r'', answer)
+
+        self.answer = answer
+        return answer
+
 ##########################################################################################################################
 
 def zimon_metrics(metric_group, table, query_filter, numbuckets, period, cli, Debug):
