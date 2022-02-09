@@ -310,7 +310,7 @@ class CollectorClient():
         self.answer = self.answer.decode(encoding='UTF-8')
         self.answer = re.sub(r'\n\.\n',r'',self.answer)
         self.s.close()
-        return self.answer
+        return str(self.answer)
     
     #def receiveAnswerOLD2(self):
     #    self.answer = ""
