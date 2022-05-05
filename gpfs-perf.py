@@ -293,7 +293,7 @@ class CollectorClient():
 
         self.answer = answer
         return answer
-
+  
 ##########################################################################################################################
 
 def zimon_metrics(metric_group, table, query_filter, numbuckets, period, cli, Debug):
